@@ -4,150 +4,16 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>WaifuCat Buff Tool</title>
-  <style>
-    body {
-      font-family: "Poppins", sans-serif;
-      background: linear-gradient(135deg, #1a1a2e, #16213e);
-      color: white;
-      text-align: center;
-      padding: 50px;
-    }
-    h2 {
-      font-size: 2em;
-      color: #00f6ff;
-      text-shadow: 0 0 10px #00f6ff;
-    }
-    input, button {
-      padding: 10px;
-      font-size: 16px;
-      border-radius: 8px;
-      border: none;
-      margin: 10px;
-      outline: none;
-    }
-    input {
-      width: 300px;
-      text-align: center;
-      background: #222;
-      color: white;
-    }
-    button {
-      background: #00f6ff;
-      color: #000;
-      cursor: pointer;
-      transition: 0.3s;
-      font-weight: bold;
-    }
-    button:hover:not(:disabled) {
-      background: #0ff;
-      transform: scale(1.05);
-    }
-    button:disabled {
-      background: #444;
-      cursor: not-allowed;
-    }
-    #result {
-      margin-top: 25px;
-      white-space: pre-wrap;
-      text-align: left;
-      width: 520px;
-      margin-left: auto;
-      margin-right: auto;
-      background: rgba(0, 0, 0, 0.5);
-      padding: 15px;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0,255,255,0.2);
-      transition: 0.5s;
-    }
-    .error { color: #ff6b6b; }
-    .success { color: #4cff4c; }
-    .loading {
-      display: inline-block;
-      width: 22px;
-      height: 22px;
-      border: 3px solid #00f6ff;
-      border-top-color: transparent;
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-      vertical-align: middle;
-      margin-right: 6px;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
-  </style>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
   <h2>WaifuCat Buff Tool</h2>
   <input type="text" id="discordId" placeholder="Nhập ID Discord...">
-  <button id="buffBtn" onclick="sendBuff()">Gửi Buff</button>
+  <button id="buffBtn">Gửi Buff</button>
 
   <div id="result"></div>
 
-  <script>
-    let isSending = false;
-    let cooldownTimer;
-
-    async function sendBuff() {
-      const id = document.getElementById("discordId").value.trim();
-      const btn = document.getElementById("buffBtn");
-      const resultBox = document.getElementById("result");
-
-      if (!id) {
-        resultBox.innerHTML = "<span class='error'>Vui lòng nhập ID</span>";
-        return;
-      }
-
-      if (isSending) return;
-
-      isSending = true;
-      btn.disabled = true;
-      resultBox.style.opacity = "1";
-      resultBox.innerHTML = `<div class='loading'></div> Đang xử lý...`;
-
-      try {
-        const res = await fetch(`https://waifucat.pythonanywhere.com/buff?id=${id}`);
-        const data = await res.json();
-
-        if (data.error) {
-          resultBox.innerHTML = `${data.error}\n`;
-
-          if (data.wait_seconds) {
-            let remaining = data.wait_seconds;
-            cooldownTimer = setInterval(() => {
-              remaining--;
-              resultBox.innerHTML = `${data.error}\nChờ: ${remaining}s`;
-              if (remaining <= 0) {
-                clearInterval(cooldownTimer);
-                location.reload();
-              }
-            }, 1000);
-          }
-
-          if (data.invite)
-            resultBox.innerHTML += `\n${data.invite}`;
-        } else {
-          resultBox.innerHTML =
-            `Trạng thái: ${data.Status}\n` +
-            `ID: ${data.ID}\n` +
-            `Thành công: ${data.Success}\n` +
-            `Thất bại: ${data.Failed}\n` +
-            `Tổng: ${data.Total}`;
-        }
-
-      } catch {
-        resultBox.innerHTML = "<span class='error'>Lỗi kết nối API</span>";
-      }
-
-      setTimeout(() => {
-        resultBox.style.opacity = "0.9";
-      }, 800);
-
-      setTimeout(() => {
-        btn.disabled = false;
-        isSending = false;
-      }, 2000);
-    }
-  </script>
-
+  <script src="script.js"></script>
 </body>
 </html>
