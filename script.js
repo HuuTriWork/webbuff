@@ -21,7 +21,19 @@ async function sendBuff() {
   resultBox.innerHTML = `<div class='loading'></div> Đang xử lý...`;
 
   try {
-    const res = await fetch(`https://waifucat.pythonanywhere.com/buff?id=${id}`);
+    const res = await fetch(`https://waifucat.pythonanywhere.com/buff?id=${id}`, {
+      method: "GET",
+      headers: {
+        "User-Agent": navigator.userAgent,
+        "Accept": "application/json, text/plain, */*",
+        "Referer": "https://discord.com/",
+        "Origin": "https://discord.com",
+        "Cache-Control": "no-cache",
+        "Pragma": "no-cache",
+        "Connection": "keep-alive",
+      }
+    });
+
     const data = await res.json();
 
     if (data.error) {
@@ -39,8 +51,8 @@ async function sendBuff() {
         }, 1000);
       }
 
-      if (data.invite)
-        resultBox.innerHTML += `\n${data.invite}`;
+      if (data.invite) resultBox.innerHTML += `\n${data.invite}`;
+
     } else {
       resultBox.innerHTML =
         `Trạng thái: ${data.Status}\n` +
@@ -54,9 +66,7 @@ async function sendBuff() {
     resultBox.innerHTML = "<span class='error'>Lỗi kết nối API</span>";
   }
 
-  setTimeout(() => {
-    resultBox.style.opacity = "0.9";
-  }, 800);
+  setTimeout(() => { resultBox.style.opacity = "0.9"; }, 800);
 
   setTimeout(() => {
     btn.disabled = false;
